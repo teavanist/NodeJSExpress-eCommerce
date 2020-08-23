@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  - function isEmptyObject(obj) {
+  -      var name;
+  -      for (name in obj) {
+  -        return false;
+  -      }
+  -      return true;
+  -    }
+  h1 User Registration
+  - if (isEmptyObject(errors) == false)
+    p.errorMessage= "The following errors occurred:"
+    ul  
+      each error in errors
+        li #{error.msg}
+    p.errorMessage= "Please try again"
+
+  .container
+    form(method='POST', action='/accounts/registration')
+      #form-group
+        label First name:
+        input.form-control(name='first_name', type='text')
+      #form-group
+        label Last name:
+        input.form-control(name='last_name', type='text')
+      #form-group
+        label Email (this will be your username):
+        input.form-control(name='username', type='text')
+      #form-group
+        label Password:
+        input.form-control(name='password',type='password')
+      #form-group
+        label Confirm:
+        input.form-control(name='password2',type='password')
+      br
+      input.btn.btn-primary(type='submit',value='Submit')
+
+
