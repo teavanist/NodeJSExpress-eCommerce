@@ -20,7 +20,7 @@ var gigsRouter = require('./routes/gigs');
 const db = require('./config/database');
 try {
   db.authenticate()
-  console.log("Database connected successfully")
+  
 } catch (error) {
   console.error('Unable to connect to the database:', error);
   

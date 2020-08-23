@@ -12,7 +12,12 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 
 
-/* All users */
+/* All users page displaying 
+- all the usernames 
+- their activation tokens and 
+- joining date 
+To be uncommented only for troubleshooting along with the navigation link in layout.pug
+
 router.get('/allusers', function(req, res, next) {
   var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
 
@@ -26,6 +31,9 @@ router.get('/allusers', function(req, res, next) {
   .catch(err=> console.log(err))
 
 });
+
+*/
+
 
 /* 
 GET accounts/login page 
@@ -60,7 +68,7 @@ router.post('/login',
     failureFlash: true  
 
   }) , function(req, res) {
-        console.log(req.user);
+        
         req.session.user = req.user;
         res.redirect('/');
   }
@@ -94,6 +102,7 @@ router.post('/registration', [
   body('username').notEmpty().withMessage('username cannot be empty'),
   body('username').isEmail().withMessage('username must be a valid email'),
   body('password').isLength({ min: 5 }).withMessage('password must be at least 5 characters long'),
+  body('password').equals(body('password2')).withMessage('Passwords entered do not match')
   
 
 ],function(req, res, next) {
@@ -182,7 +191,7 @@ router.get('/:email/verify/:activation_token', function(req, res, next) {
       //if empty return null 
       if (!userRecord){
         req.flash('Message','Record  not found')
-        res.redirect('/accounts/allusers')
+        res.redirect('/accounts/login')
       } 
       else {
 
@@ -191,7 +200,7 @@ router.get('/:email/verify/:activation_token', function(req, res, next) {
           enabled: true
         }).then(function(result){
           req.flash('Message','Record is updated for: ' + result.username)
-          res.redirect('/accounts/allusers')
+          res.redirect('/accounts/login')
 
         })
 

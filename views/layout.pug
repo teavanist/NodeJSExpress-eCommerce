@@ -26,8 +26,8 @@ html
               a.nav-link(href='/accounts/login') Login
             li.nav-item
               a.nav-link(href='/accounts/registration') Register
-          li.nav-item
-            a.nav-link(href='/accounts/allusers') All
+          //-  li.nav-item  uncomment only for troubleshooting along with /allusers route 
+          //-   a.nav-link(href='/accounts/allusers') All
         if user 
           button.btn.btn-secondary.my-2.my-sm-0(type='button', disabled='') #{user.first_name} 
 

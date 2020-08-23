@@ -1,5 +1,7 @@
-/* All requests will be pre-fixed with: 
-GIGS
+/*  
+
+THIS IS JUST A SAMPLE CODE. NOT USED AS PART OF THE PROJECT 
+
 */
 
 
