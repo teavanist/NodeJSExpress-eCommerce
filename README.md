@@ -8,3 +8,10 @@ This is a simple eCommerce app that our team developed as part of the Secure Web
  - SQLite Database using Sequelize ORM 
  - Passport JS 
 
+## Usage:
+
+To run the project:
+> npm run start
+
+To run the project using `devmon` (for hot-reloading in case of debugging and dev):
+> npm run devstart
