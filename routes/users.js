@@ -102,10 +102,14 @@ router.post('/registration', [
   body('username').notEmpty().withMessage('username cannot be empty'),
   body('username').isEmail().withMessage('username must be a valid email'),
   body('password').isLength({ min: 5 }).withMessage('password must be at least 5 characters long'),
-  body('password').equals(body('password2')).withMessage('Passwords entered do not match')
-  
-
-],function(req, res, next) {
+  body('password').custom((value,{req, loc, path}) => {
+            if (value !== req.body.password2) {
+                throw new Error("Passwords don't match");
+            } else {
+                return value;
+            }
+  })],
+  function(req, res, next) {
     const errors = validationResult(req);
     
     //check if the email address already exists 
@@ -121,7 +125,6 @@ router.post('/registration', [
         
         req.flash('Message','This email address is already registered')
         res.render('login')
-
       }
 
 
