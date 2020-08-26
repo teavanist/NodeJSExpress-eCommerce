@@ -210,8 +210,109 @@ router.get('/:email/verify/:activation_token', function(req, res, next) {
       }
 
   })
+});
+
+/*
+GET accounts/password-reset page
+/accounts/password-reset
+*/
+
+router.get('/password-reset', function(req, res, next) {
+  res.render('reset');
+});
+
+/*
+POST accounts/password-reset page
+/accounts/password-reset
+*/
+
+router.post('/password-reset', function(req, res, next) {
+    //check if the email address already exists 
+	console.log(req.body.email);
+    const queryCriteria = {
+      where: {username:req.body.email} 
+    };
+  
+    User.findOne(queryCriteria)
+    .then(function(userRecord){
+      //atleast one record exists 
+      const AccountValues = userRecord
+      if (AccountValues.username){
+      //generate the email verification token 
+      var simple_salt = bcrypt.genSaltSync(5);
+      var crypto = require("crypto");
+      var id = req.body.username + Date.now().toString();
+      const emailVerificationToken =  bcrypt.hashSync(id, simple_salt);
+      const activation_token = emailVerificationToken.split('/').join('1');
+      userRecord.update({
+	activation_token: activation_token
+      }).then(() => {console.log('Token Generated')});
+      const resetURL = req.protocol + '://' + req.get('host') + '/accounts/password-reset/' + activation_token
+      
+      console.log('\n\n' + resetURL + '\n\n');
 
 
+        req.flash('Message', 'A reset link has been generated in the console. Click the link to reset your password')
+	}})
+   .catch((err) => {
+      req.flash('Message', 'A reset link has been generated in the console. Click the link to reset your password');})
+   .finally(() => {
+	res.render('reset')
+  });
+});
+
+/*
+GET accounts/password-reset/:reset_token
+/accounts/password-reset/<reset_token>
+*/
+
+router.get('/password-reset/:reset_token' , function(req, res, next) {
+	console.log(req.params.reset_token);
+
+	res.render('updatepassword', {token: req.params.reset_token});
+});
+
+/*
+POST accounts/password-reset/:reset_token
+/accounts/password-reset/<reset_token>
+*/
+
+router.post('/password-reset/:reset_token', [
+	body('password').isLength({ min: 5 }).withMessage('password must be at least 5 characters long'),
+	body('password').custom((value,{req, loc, path}) => {
+            if (value !== req.body.passwordconfirm) {
+                throw new Error("Passwords don't match");
+            } else {
+                return value;
+            }
+        })], function(req, res, next) {
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty()){
+		res.render('updatepassword', {token: req.params.reset_token,
+					      errors: errors.array()});
+	}
+
+	console.log(req.params.reset_token);
+
+	const queryCriteria = {
+		where: {activation_token: req.params.reset_token}
+	};
+
+	User.findOne(queryCriteria)
+		.then(function(userRecord) {
+			if (userRecord.username) {
+				console.log(userRecord.username);
+				const salt = bcrypt.genSaltSync(10);
+				const password = bcrypt.hashSync(req.body.password, salt);
+				userRecord.update({
+					password: password,
+					activation_token: 'unknown' 
+				      }).then(() => {console.log('Password updated')});
+				req.flash('Message', 'Password updated');
+		}})
+		.catch((err) => {console.log(err);});
+	res.render('login');
 });
 
 

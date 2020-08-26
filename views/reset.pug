@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  - function isEmptyObject(obj) {
+  -      var name;
+  -      for (name in obj) {
+  -        return false;
+  -      }
+  -      return true;
+  -    }
+  h1 Password Reset
+  - if (isEmptyObject(errors) == false)
+    p.errorMessage= "The following errors occurred:"
+    ul  
+      each error in errors
+        li #{error.msg}
+    p.errorMessage= "Please try again"
+
+  .container
+    form(method='POST', action='/accounts/password-reset')
+      #form-group
+        label Your registered email:
+        input.form-control(name='email',type='text')
+      br
+      input.btn.btn-primary(type='submit',value='Submit')
+
+
