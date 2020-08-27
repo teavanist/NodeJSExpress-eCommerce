@@ -2,13 +2,14 @@ doctype html
 html
   head
     title Thin Air LTD 
-    link(rel='stylesheet' href='/bower_components/bootstrap/dist/css/bootstrap.css' crossorigin='anonymous')
+    link(rel='stylesheet' href='/css/bootstrap.css' crossorigin='anonymous')
+    link(rel='stylesheet' href='/css/main.css')
     link(rel='stylesheet' href='/css/style.css')
 
 
   body
     nav.navbar.navbar-expand-md.navbar-dark.bg-dark
-      a.navbar-brand(href='#') Thin Air LTD
+      a.navbar-brand(href='/') Thin Air LTD
       button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarsExampleDefault', aria-controls='navbarsExampleDefault', aria-expanded='false', aria-label='Toggle navigation')
         span.navbar-toggler-icon
       #navbarsExampleDefault.collapse.navbar-collapse
@@ -44,5 +45,5 @@ html
       hr 
       footer 
         p Copyright &copy; 2020
-    script(src='/bower_components/bootstrap/site/docs/4.5/assets/js/vendor/jquery.slim.min.js')
-    script(src='/bower_components/bootstrap/dist/js/bootstrap.js')
+    script(src='/jquery.slim.min.js')
+    script(src='/js/bootstrap.js')

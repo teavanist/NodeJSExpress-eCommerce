@@ -76,8 +76,6 @@ router.post('/login',
 
 
 
-
-
 /* 
 accounts/registration page 
 */
@@ -315,5 +313,15 @@ router.post('/password-reset/:reset_token', [
 	res.render('login');
 });
 
+router.get('/google',
+  passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
+
+
+router.get('/google_auth', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    req.session.user = req.user;
+    res.redirect('/');
+  });
 
 module.exports = router;
