@@ -1,12 +1,8 @@
 extends layout
 
 block content
-   h1 Sign in page 
 
-
-   p 
-
-   div.text-center.card
+   div.text-center.d-flex.justify-content-center.mt-5
         form(class="form-signin" method="POST" action="/accounts/login")
             #error
                 if error
@@ -27,7 +23,10 @@ block content
 
 
             //-signIn button
-            - var buttonClass=['btn', 'btn-lg', 'btn-primary', 'btn-block'];
+            - var buttonClass=['btn', 'btn-sm', 'btn-primary', 'btn-block'];
             button(class=buttonClass type="submit") Sign in
- 
 
+            //-Reset password
+            p.font-weight-light.pt-2
+                | Forgot your password assword? 
+                a(href='/accounts/password-reset') Reset here
