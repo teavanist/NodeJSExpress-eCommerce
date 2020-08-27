@@ -8,7 +8,7 @@ block content
   -      }
   -      return true;
   -    }
-  h1 User Registration
+
   - if (isEmptyObject(errors) == false)
     p.errorMessage= "The following errors occurred:"
     ul  
@@ -16,24 +16,28 @@ block content
         li #{error.msg}
     p.errorMessage= "Please try again"
 
-  .container
+  div.text-left.d-flex.justify-content-center.mt-5
     form(method='POST', action='/accounts/registration')
+
+      - var h1Classes = ['h3', 'mb-3', 'font-weight-normal']
+      p(class=h1Classes) User Registration
+
       #form-group
-        label First name:
-        input.form-control(name='first_name', type='text')
-      #form-group
-        label Last name:
-        input.form-control(name='last_name', type='text')
-      #form-group
+        label(for="first_name" class="sr-only") First name:
+        input.form-control(name='first_name', type='text', placeholder='First name')
+      #form-group.mt-2
+        label(for="last_name" class="sr-only") Last name:
+        input.form-control(name='last_name', type='text', placeholder='Last name')
+      #form-group.mt-3
         label Email (this will be your username):
         input.form-control(name='username', type='text')
-      #form-group
+      #form-group.mt-3
         label Password:
         input.form-control(name='password',type='password')
       #form-group
         label Confirm:
         input.form-control(name='password2',type='password')
       br
-      input.btn.btn-primary(type='submit',value='Submit')
+      input.btn.btn-primary.btn-block(type='submit',value='Register')
 
 

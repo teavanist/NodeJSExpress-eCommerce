@@ -8,20 +8,24 @@ block content
   -      }
   -      return true;
   -    }
-  h1 Password Reset
-  - if (isEmptyObject(errors) == false)
-    p.errorMessage= "The following errors occurred:"
-    ul  
-      each error in errors
-        li #{error.msg}
-    p.errorMessage= "Please try again"
+  div.text-center.d-flex.justify-content-center.mt-5
 
-  .container
-    form(method='POST', action='/accounts/password-reset')
-      #form-group
-        label Your registered email:
-        input.form-control(name='email',type='text')
-      br
-      input.btn.btn-primary(type='submit',value='Submit')
+
+    - if (isEmptyObject(errors) == false)
+      p.errorMessage= "The following errors occurred:"
+      ul  
+        each error in errors
+          li #{error.msg}
+      p.errorMessage= "Please try again"
+
+    .container
+      - var h1Classes = ['h3', 'mb-3', 'font-weight-normal']
+      p(class=h1Classes) Password Reset
+      form(method='POST', action='/accounts/password-reset')
+        #form-group
+          label Your registered email:
+          input.form-control(name='email',type='text')
+        br
+        input.btn.btn-primary(type='submit',value='Submit')
 
 

@@ -9,7 +9,7 @@ block content
                     p.text-danger Error!!!
 
             - var h1Classes = ['h3', 'mb-3', 'font-weight-normal']
-            h1(class=h1Classes) Please sign in
+            p(class=h1Classes) Sign in
 
             //-input email
             label( for="inputEmail" class="sr-only") Email address
@@ -27,6 +27,10 @@ block content
             button(class=buttonClass type="submit") Sign in
 
             //-Reset password
-            p.font-weight-light.pt-2
+            p.font-weight-light.m-3
                 | Forgot your password assword? 
                 a(href='/accounts/password-reset') Reset here
+
+            a.btn.btn-block.btn-outline-dark(href='/accounts/google' role='button' style='text-transform:none')
+                img(width='20px' style='margin-bottom:3px; margin-right:5px' alt='Google sign-in' src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png')
+                |       Login with Google
