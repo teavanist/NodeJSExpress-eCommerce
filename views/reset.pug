@@ -19,8 +19,7 @@ block content
       p.errorMessage= "Please try again"
 
     .container
-      - var h1Classes = ['h3', 'mb-3', 'font-weight-normal']
-      p(class=h1Classes) Password Reset
+      p.h3.mb-3.font-weight-normal Password Reset
       form(method='POST', action='/accounts/password-reset')
         #form-group
           label Your registered email:

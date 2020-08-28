@@ -318,7 +318,8 @@ router.post('/password-reset/:reset_token', [
   });
 
 router.get('/google',
-  passport.authenticate('google', { scope: ['profile', 'email', 'openid'] }));
+  passport.authenticate('google', { scope: ['profile', 'email', 'openid'] 
+}));
 
 
 router.get('/google_auth',
