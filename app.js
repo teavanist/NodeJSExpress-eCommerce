@@ -12,9 +12,8 @@ const expressValidator = require('express-validator');
 
 
 //All Routers are declared here 
-var indexRouter = require('./routes/index');
+//var indexRouter = require('./routes/index');
 var accountsRouter = require('./routes/users');
-var gigsRouter = require('./routes/gigs');
 
 //Database connection and test 
 const db = require('./config/database');
@@ -83,9 +82,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // view engine setup
-app.use('/', indexRouter); //anything starting with '/' such as http://site/
+app.use('/', express.Router().get('/',(req,res,next)=> {
+  res.render('index');
+})); //anything starting with '/' such as http://site/
 app.use('/accounts', accountsRouter); //anything starting with /accounts such as http://site/accounts 
-app.use('/gigs', gigsRouter); //anything starting with /accounts such as http://site/gigs 
 
 
 

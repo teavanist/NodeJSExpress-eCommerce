@@ -1,5 +1,5 @@
 /*
-This file handles the Gig model
+This file handles the User model
 1. Defines its attributes 
 2. Synchronizes the attributes with the structure in the table 
 */
