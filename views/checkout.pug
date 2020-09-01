@@ -68,7 +68,7 @@ block content
             label Amount:
             input.form-control(name='city',id='city', type='text', placeholder='City name' value = grand_total) 
           br
-          button#btn_payment.btn.btn-secondary Save Payment Details 
+          button#btn_payment_save.btn.btn-secondary Save Payment Details 
           br
           
         
@@ -103,9 +103,17 @@ block content
         document.getElementById("address_msg").hidden = true
       }
 
+      const addPayment = (ev) => {}
+      const unhidePaymentSection = (ev) => {
+
+
+
       document.addEventListener('DOMContentLoaded', ()=>{
       document.getElementById('btn_save').addEventListener('click',addAddress)
       document.getElementById('btn_edit_address').addEventListener('click',unhideaddressform)
+      document.getElementById('btn_payment_save').addEventListener('click',addPayment)
+      document.getElementById('btn_edit_payment').addEventListener('click',unhidePaymentSection)
+
 
       })
 
