@@ -1,0 +1,113 @@
+extends layout
+
+block content
+  h1 Checkout
+  h2 Order # #{CartItems[0].order_id}
+  .container 
+    p.lead 
+    table.table
+      thead
+        tr
+          th(scope='col') Product name
+          th(scope='col') Quantity 
+          th(scope='col') Unit Price
+          th(scope='col') Total
+      tbody
+        each cartitem  in CartItems
+          tr
+            td #{cartitem.product_name}
+            td #{cartitem.cart_qty}
+            td #{cartitem.unit_price}
+            td #{cartitem.total_cost}
+    p.lead 
+      h3 Grand Total: € #{grand_total}
+    p.lead 
+      div.text-left.d-flex.justify-content-center.mt-5
+      form(method='POST', action='/accounts/registration')
+
+        - var h1Classes = ['h3', 'mb-3', 'font-weight-normal']
+        div(id='address_section')
+          p(class=h1Classes) Address
+
+          #form-group
+            label Street:
+            input.form-control(name='street_name', id='street_name',type='text', placeholder='Street name')
+          #form-group
+            label City:
+            input.form-control(name='city',id='city', type='text', placeholder='City name')
+          #form-group
+            label Zipcode:
+            input.form-control(name='zipcode',id='zipcode',type='text')
+          #form-group
+            label Country:
+            input.form-control(name='country',id='country',type='text')
+          #form-group
+            label Additional Information:
+            input.form-control(name='city', type='text', id='additional_info', placeholder='Info such as landmark, unit , C/O etc')
+          br
+          button#btn_save.btn.btn-secondary Save Address Details 
+          br
+
+
+        div(id ='address_msg', hidden='true')
+          pre.
+          button#btn_edit_address.btn.btn-secondary Edit
+
+        div(id='payment_section')
+          br
+          p(class=h1Classes) Payment details
+
+          #form-group
+            label Payment type:
+            select#inlineFormCustomSelect.custom-select.mr-sm-2
+              option(selected='') Choose...
+              option(value='Paypal') Paypal
+              option(value='BankCard') Bank Card
+              option(value='CreditCard') Credit Card
+          #form-group
+            label Amount:
+            input.form-control(name='city',id='city', type='text', placeholder='City name' value = grand_total) 
+          br
+          button#btn_payment.btn.btn-secondary Save Payment Details 
+          br
+          
+        
+        div(id ='payment_msg', hidden='true')
+          pre.
+          button#btn_edit_payment.btn.btn-secondary Edit              
+        
+    p
+      em Depending on the type of payment type, you will be redirected to our partner site. During this time, please do not refresh or navigate away to a different site on the page. You will be redirected back to our site once the payment is completed.  
+    p.lead
+      a(href=`/shop/payment/` + CartItems[0].order_id , class='btn btn-info' role ='button') Proceed to Pay
+
+    script(type="text/javascript").
+      const addAddress = (ev) => {
+        ev.preventDefault();
+        let useraddress = {
+        street: document.getElementById("street_name").value,
+        city: document.getElementById("city").value,
+        zipcode: document.getElementById("zipcode").value,
+        country: document.getElementById("country").value,
+        additional_info: document.getElementById("additional_info").value,
+        }
+        //hide the form
+        document.getElementById("address_section").hidden = true
+        document.getElementById("address_msg").hidden = false
+        let pre = document.querySelector('#address_msg pre')
+        pre.textContent = '\nStreet: ' + useraddress["street"] + '\nCity: ' +useraddress["city"] + '\nZipcode:'+useraddress["zipcode"] + '\nCountry:'+useraddress["country"] + '\nAdditional Info:' +useraddress["additional_info"]
+      }
+      const unhideaddressform = (ev) => {
+        ev.preventDefault();
+        document.getElementById("address_section").hidden = false
+        document.getElementById("address_msg").hidden = true
+      }
+
+      document.addEventListener('DOMContentLoaded', ()=>{
+      document.getElementById('btn_save').addEventListener('click',addAddress)
+      document.getElementById('btn_edit_address').addEventListener('click',unhideaddressform)
+
+      })
+
+      
+

@@ -1,0 +1,55 @@
+extends layout
+
+
+block content
+    script(type='text/javascript').
+        const beautifyProduct = function(productDetails){
+        console.log(productDetails["name"])
+        var prodcutStr = `<br><div class="container-lg"><div class="form-group"> <p class="list-group-item.lead"><b>Name:</b> `;
+        prodcutStr += productDetails['name'] + `</p> <p class="list-group-item.lead"> <b>Price:</b> `;
+        prodcutStr += productDetails['price'] + `</p> <p class="list-group-item.lead"> <b>Number of available items:</b> `;
+        prodcutStr += productDetails['available'] + `</p> <p class="list-group-item.lead"><i>`;        
+        prodcutStr += productDetails['slug'] + `</i></p></div></div>`
+        return prodcutStr;
+        }
+        window.onload = function () {
+        if (window.location.toString().includes('#')) {
+        const item = decodeURI(window.location.toString().split('#')[1])
+        document.body.innerHTML = "";
+        document.body.innerHTML += beautifyProduct(JSON.parse(item));
+        
+        
+        }
+        };
+
+
+    h1 #{title} 
+
+    .container 
+        p.lead 
+        ul.list-group.align-items-center
+            each product  in products
+                li(class='list-group-item align-items-center')
+                    h3 #{product.name}
+                    p #{product.description}
+                    p #{product.price}
+                    a(href='#', class='btn btn-info' role ='button' onclick=`window.open('#{"slug":"`+product.slug+`","name":"`+product.name+`","price":"`+product.price+`","available":"`+product.count+`"}','Shopping: Product details', 'width=400,height=300'); return false;` ) Know more
+                    
+                    a(href=`/shop/basket/addtocart/` + product.pk , class='btn btn-success pull-right' role ='button') Add to Cart
+                    
+
+
+                        
+                        
+                        
+
+
+
+
+                        
+
+
+            
+
+
+

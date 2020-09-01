@@ -5,6 +5,8 @@ html
     link(rel='stylesheet' href='/css/bootstrap.css' crossorigin='anonymous')
     link(rel='stylesheet' href='/css/main.css')
     link(rel='stylesheet' href='/css/style.css')
+    script(src='https://code.jquery.com/jquery-1.10.2.js')
+
 
 
   body
@@ -22,13 +24,15 @@ html
               a.nav-link(href='/accounts/logout') 
             li.nav-item
               a.nav-link(href='/accounts/logout') Logout 
+            li.nav-item
+              a.nav-link(href='/shop/products/list') Shop 
+            li.nav-item
+              a.nav-link(href='/shop/basket/mybasket') My Basket 
           else 
             li.nav-item
               a.nav-link(href='/accounts/login') Login
             li.nav-item
               a.nav-link(href='/accounts/registration') Register
-          //-  li.nav-item  uncomment only for troubleshooting along with /allusers route 
-          //-   a.nav-link(href='/accounts/allusers') All
         if user 
           button.btn.btn-secondary.my-2.my-sm-0(type='button', disabled='') #{user.first_name} 
 
@@ -42,7 +46,7 @@ html
 
       block content
 
-      footer.fixed-bottom.text-center.font-weight-light.small
-        p Copyright &copy; 2020
     script(src='/jquery.slim.min.js')
     script(src='/js/bootstrap.js')
+    footer.text-center.small
+      p Copyright &copy; 2021

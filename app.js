@@ -12,8 +12,10 @@ const expressValidator = require('express-validator');
 
 
 //All Routers are declared here 
-//var indexRouter = require('./routes/index');
 var accountsRouter = require('./routes/users');
+var apiRouter = require('./routes/api');
+var shopRouter = require('./routes/shop');
+
 
 //Database connection and test 
 const db = require('./config/database');
@@ -86,7 +88,8 @@ app.use('/', express.Router().get('/',(req,res,next)=> {
   res.render('index');
 })); //anything starting with '/' such as http://site/
 app.use('/accounts', accountsRouter); //anything starting with /accounts such as http://site/accounts 
-
+app.use('/api', apiRouter); //anything starting with /accounts such as http://site/api 
+app.use('/shop', shopRouter);
 
 
 // error handler

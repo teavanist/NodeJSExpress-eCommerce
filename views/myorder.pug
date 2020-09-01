@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  h1 Order # #{CartItems[0].order_id}
+  .container 
+    p.lead 
+    table.table
+      thead
+        tr
+          th(scope='col') Product name
+          th(scope='col') Quantity 
+          th(scope='col') Unit Price
+          th(scope='col') Total
+      tbody
+        each cartitem  in CartItems
+          tr
+            td #{cartitem.product_name}
+            td #{cartitem.cart_qty}
+            td #{cartitem.unit_price}
+            td #{cartitem.total_cost}
+    p.lead 
+      h3 Grand Total: € #{grand_total}
+
