@@ -139,7 +139,7 @@ router.post('/products/create', authenticateToken, (req, res) => {
             })
             .then(function (product) {
                 
-                res.status(200).send('New product added successfully')
+                res.status(200).send('New product added successfully with product ID: ' + product.pk)
 
             })
             .catch((err) => { console.log(err); });
@@ -158,32 +158,39 @@ handles GET api/products/:productid page
 */
 router.get('/products/:productid', authenticateToken, function (req, res, next) {
 
-    //check if Product exists in database 
-    const queryCriteria = {
-        where: { pk: req.params.productid }
-    };
+    async function doTheMainFunction(){
+        //check if Product exists in database 
+        const productQueryCriteria = {
+            where: { pk: req.params.productid }
+        };
 
-    Product.findOne(queryCriteria)
-    .then(function (productRecord) {
-        
-        const queryResult = productRecord
-        //atleast one record exists, update the DB 
-        if (queryResult){
-            
-            //return the product details in a JSON
+        //check if Product exists in database 
+        const partnerQueryCriteria = {
+            where: { name: req.partner.partnername }
+        };
+
+        let productRecord = await Product.findOne(productQueryCriteria)
+        let partnerRecord = await Partner.findOne(partnerQueryCriteria)
+
+
+        if (('p-' + partnerRecord.id) ==  productRecord.seller){
             return res.json({
-                product: queryResult
+                product: productRecord
             })
+    
+        } else {
+            res.status(404).send('Potential error due to product # or you may not have access.');
 
         }
-        else {
-            //return error 
-            res.status(404).send('Unable to find product')
-        }
 
 
-	})
-	.catch((err) => { console.log(err) })
+
+    
+    }
+
+
+    doTheMainFunction()
+
 
 
 
@@ -197,28 +204,42 @@ handles GET /api/products?page=X&pagination=Y
 router.get('/products', authenticateToken, function (req, res, next) {
 
     try {
-        
+
+        async function getUserIDfromUsername(username){
+
+            let result = await Partner.findOne(
+                {  
+                    name: username
+                });
+            return result;
+
+        }
+
         const page = parseInt(req.query.page)
         const pageSize = parseInt(req.query.pagination)
 
         const offset = (page - 1) * pageSize 
         const limit = pageSize
-
     
-        async function getProductRecordsByPagination(offset,limit){
+        async function getProductRecordsByPagination(offset,limit,sellerid){
     
             //let recordOfProducts = await Product.findAndCountAll({ where: { createdByID: employeeID }, offset: 0, limit: 10 });
             let recordOfProducts = await Product.findAndCountAll(
                 {  
+                    where: { seller: sellerid },
                     offset: offset, 
                     limit: limit 
-                });
+                }
+                );
             return recordOfProducts;
     
         }
     
         async function doTheMainFunction(){
-            let productData = await getProductRecordsByPagination(offset,limit);
+            let partnerData = await getUserIDfromUsername(req.partner.partnername)
+            var sellerid_of_partner = 'p-' + partnerData.id
+            console.log(sellerid_of_partner)
+            let productData = await getProductRecordsByPagination(offset,limit,sellerid_of_partner);
                             
             if ( typeof productData == 'undefined' || productData == null){
                 res.status(403).send('Potential error due to inputs provided. If you need further assistance, please contact support');

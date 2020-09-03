@@ -17,8 +17,8 @@ block content
           tr
             td #{cartitem.product_name}
             td #{cartitem.cart_qty}
-            td #{cartitem.unit_price}
-            td #{cartitem.total_cost}
+            td €#{cartitem.unit_price}
+            td €#{cartitem.total_cost}
             td 
               //- button.btn.btn-outline-danger.btn-sm(type='button' title='Remove one quantity') X
               form(action='/shop/basket/mybasket/remove/order/'+CartItems[0].order_id+'/item/'+ cartitem.product_id, method= "post")

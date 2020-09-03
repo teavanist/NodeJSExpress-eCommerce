@@ -32,7 +32,7 @@ block content
                 li(class='list-group-item align-items-center')
                     h3 #{product.name}
                     p #{product.description}
-                    p #{product.price}
+                    p €#{product.price}
                     a(href='#', class='btn btn-info' role ='button' onclick=`window.open('#{"slug":"`+product.slug+`","name":"`+product.name+`","price":"`+product.price+`","available":"`+product.count+`"}','Shopping: Product details', 'width=400,height=300'); return false;` ) Know more
                     
                     a(href=`/shop/basket/addtocart/` + product.pk , class='btn btn-success pull-right' role ='button') Add to Cart

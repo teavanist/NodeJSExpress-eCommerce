@@ -77,7 +77,7 @@ async function getCurrentBasketItems(user_id,res,req){
     res.status(403).send('Some problem retrieving your current basket');
   }
   else if (CartItems.length==0){
-    req.flash('Message', 'You have not added any item to your cart. Please add and try again ' )
+    req.flash('Message', 'You have not selected any items. Please select any product and then click again' )
     res.redirect('/shop/products/list')
 
   }
