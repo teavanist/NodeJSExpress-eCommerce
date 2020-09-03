@@ -52,8 +52,8 @@ async function getBasketItemsByOrderID(orderid){
     })
 
   return results
-
 }
+
 
 async function getProductQuantity(id){
 
@@ -146,10 +146,6 @@ router.get('/basket/addtocart/:id', function(req, res, next) {
   var cartID = '';
 
 
-
-
-
-  
   async function getUsersActiveOrder(userid){
      
     const queryCriteria = {
@@ -273,17 +269,13 @@ router.get('/basket/addtocart/:id', function(req, res, next) {
       let CartItems = await getBasketItemsByOrderID(ordernumber); 
 
       for (var i=0; i< CartItems.length;i++){
-        if(parseFloat(CartItems[i].cart_qty) > parseFloat(CartItems[i].available_qty)) {// user selected more than available 
+        if(parseFloat(CartItems[i].cart_qty) >= parseFloat(CartItems[i].available_qty)) {// user selected more than available 
           return  res.status(404).send('You have selected more items than available in stock. This item cannot be selected now')
         }
       }
 
 
     }
-
-
-
-
 
     //3. check if the item is in the cart -> if yes, return cartid 
     let cartDetail = await isItemInCartAlready(productID,ordernumber);
@@ -330,6 +322,148 @@ router.get('/basket/mybasket', function(req, res, next){
 
 });
 
+/* Remove item from cart functionality  */
+// e.g. POST /shop/basket/mybasket/remove/order/4/item/1
+
+router.post('/basket/mybasket/remove/order/:orderid/item/:productid', function(req, res, next){
+  if(!req.session.user){
+    return res.status(403).send('Please login ');
+  }
+
+  try {
+    var user = req.session.user
+    var productid = parseInt(req.params.productid )
+    var orderid = parseInt(req.params.orderid )
+  
+    // reduce quantity of item by 1 in cart 
+    async function reduceProductQtyInCartByOne(orderid,productid){
+      try {
+
+        const queryCriteria = {
+          where: {
+            product_id: productid,
+            order_id: orderid
+          }
+        }
+        
+        const cart = CartItem.findAll(queryCriteria)
+        res.status(403).send('TBD: The cart quantity is' + cart.quantity);
+
+        
+      } catch (error) {
+        res.status(403).send('TBD: Error in reduceProductQtyInCartByOne function');
+        console.log(error)
+      }
+
+  
+    }
+
+    async function reduceProductQtyInCartByOnev2(orderid,productid){
+      const queryCriteria = {
+        where: { 
+          product_id: productid,
+          order_id: orderid
+        }
+      };
+  
+      CartItem.findOne(queryCriteria)
+      .then(function (cartItemRecord) {
+  
+        //if empty return null 
+        if (!cartItemRecord) {
+          res.status(403).send('Error adding to cart: The cart record could not be found during update process. Please contact support');
+        }
+        else {
+          //res.status(403).send('cartItemRecord.quantity is ' + cartItemRecord.quantity + ' and cart id is ' + cartItemRecord.pk );
+          console.log('cartItemRecord.quantity is ' + cartItemRecord.quantity + ' and cart id is ' + cartItemRecord.pk );
+
+          var newQuantity = cartItemRecord.quantity -1
+          var cart_pk = cartItemRecord.pk
+
+          //if new quantity is 0, then delete the 
+
+          if (newQuantity==0){
+
+            // return res.status(403).send('Quantity is 0');
+            
+            const deletionCriteria = {
+              where: { 
+                  pk: cart_pk 
+              }
+            };
+            CartItem.destroy(deletionCriteria)
+            return res.redirect('/shop/basket/mybasket')
+
+          }
+          else {
+
+            cartItemRecord.update({
+              quantity: newQuantity
+            })
+            .then(function (result) {
+              //return result; 
+              return res.redirect('/shop/basket/mybasket')
+            })
+            .catch((err) => { res.status(403).send('Error adding to cart: Error occured during quantity update. Please contact support'); });
+
+
+          }
+  
+  
+        }
+  
+      })
+  
+    }
+ 
+    // if quantity of item is 0, delete the row in CartItem 
+    async function deleteCartRecord(cartid){
+      try {
+
+        const queryCriteria = {
+          where: { pk: cartid }
+        };
+        await CartItem.destroy(queryCriteria)
+
+      } catch (err) {
+        res.status(403).send('Some error occured')
+        console.error(err)
+
+      }
+
+    } 
+
+
+    //define the main function that combines all the subfunctions 
+    async function doTheMainFunction(orderid,productid,userid){
+      
+      await reduceProductQtyInCartByOnev2(orderid,productid)
+      
+
+      
+
+
+      
+
+
+    }
+
+    
+    //execute the main function
+    doTheMainFunction(orderid,productid,user.id)
+  
+  
+  } catch (error) {
+    console.log(error)
+    return res.status(404).send('Some error occured')
+  }
+
+
+
+
+
+
+});
 
 router.get('/basket/:orderid', function(req, res, next){
   

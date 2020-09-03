@@ -20,7 +20,11 @@ block content
             td #{cartitem.unit_price}
             td #{cartitem.total_cost}
             td 
-              button.btn.btn-outline-danger.btn-sm(type='button' title='Remove one quantity') X
+              //- button.btn.btn-outline-danger.btn-sm(type='button' title='Remove one quantity') X
+              form(action='/shop/basket/mybasket/remove/order/'+CartItems[0].order_id+'/item/'+ cartitem.product_id, method= "post")
+                //- input#lname(type='text', name='pid', value= cartitem.product_id, hidden = true)
+                input(type='submit', value='X', title='Remove one quantity', class = "button btn btn-outline-danger btn-sm")
+
 
 
     p.lead 

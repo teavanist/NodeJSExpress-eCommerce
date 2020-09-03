@@ -3,31 +3,64 @@ extends layout
 block content
     .container
         h1 Partner FAQs
-        #accordion
-        .card
-            #headingOne.card-header
-            h5.mb-0
-                button.btn.btn-link(data-toggle='collapse', data-target='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
-                | #1 How can partners submit products to the store?
-            #collapseOne.collapse.show(aria-labelledby='headingOne', data-parent='#accordion')
-            .card-body
-                | You will need a bearer token to submit products. Please contact your Account Manager who will provide you with the token. Once you have the token, you can submit the products using the APIs we have made available for you. 
-        .card
-            #headingTwo.card-header
-            h5.mb-0
-                button.btn.btn-link.collapsed(data-toggle='collapse', data-target='#collapseTwo', aria-expanded='false', aria-controls='collapseTwo')
-                | #2 How can I submit a product using the API?
-            #collapseTwo.collapse(aria-labelledby='headingTwo', data-parent='#accordion')
-            .card-body
-                p Following example shows how to do so in a tool like Postman: 
-                p 1. Make sure add the bearer token in the header 
-                p 2. Submit a request via the API 
-                p Use the two screenshots below as your guidance. 
-                p
-                    img(src="../brearer_token.png", alt="Bearer Token" class="img-fluid border border-secondary rounded") 
-                p 
-                    img(src="../create_products.png", alt="Create Products" class="img-fluid border border-secondary rounded") 
+        table.table
+            tbody
+                //- Question and Answer section 
+                tr
+                    td 
+                        h3 Creating products 
+                        br
+                        button(class = "btn btn-info") POST /api/products/create
+                        p Following example shows how to do so in a tool like Postman: 
+                        p 1. Make sure add the bearer token in the header 
+                        p 2. Submit a request via the API 
+                        p Use the two screenshots below as your guidance. 
+                        p
+                            img(src="../brearer_token.png", alt="Bearer Token" class="img-fluid border border-secondary rounded") 
+                        p 
+                            img(src="../create_products.png", alt="Create Products" class="img-fluid border border-secondary rounded")                         
 
+                //- Question and Answer section 
+                tr
+                    td 
+                        h3 Viewing details of a single product 
+                        br
+                        button(class = "btn btn-info") GET /api/products/your_product_id
+                        p Following example shows how to do so in a tool like Postman: 
+                        p 1. Make sure add the bearer token in the header 
+                        p 2. Submit a request via the above API  
+                        p Use the screenshot below as your guidance. 
+                        p
+                            img(src="../viewsingleitem.png", alt="Viewing a single item" class="img-fluid border border-secondary rounded") 
+
+                //- Question and Answer section 
+                tr
+                    td 
+                        h3 Viewing details of all products using pagination  
+                        br
+                        button(class = "btn btn-info") GET /api/products?page=X&pagination=Y
+                        p Following example shows how to do so in a tool like Postman: 
+                        p 1. Make sure add the bearer token in the header 
+                        p 2. Submit a request via the above API  with the page number and the number of items per page 
+                        p Use the two screenshots below as your guidance. 
+                        p
+                            img(src="../pagination1.png", alt="Bearer token and end point" class="img-fluid border border-secondary rounded") 
+                        p
+                            img(src="../pagination2.png", alt="Page and Pagination Configuration" class="img-fluid border border-secondary rounded") 
+                //- Question and Answer section 
+                tr
+                    td 
+                        h3 Deleting a product
+                        br
+                        button(class = "btn btn-info") DELETE /api/products/your_product_id
+                        p Following example shows how to do so in a tool like Postman: 
+                        p 1. Make sure add the bearer token in the header 
+                        p 2. Submit a request via the above API  with the product ID. You will get a success message once the deletion is done 
+                        p Use the two screenshots below as your guidance. 
+                        p
+                            img(src="../delete1.png", alt="Bearer token and end point" class="img-fluid border border-secondary rounded") 
+                        p
+                            img(src="../delete2.png", alt="Page and Pagination Configuration" class="img-fluid border border-secondary rounded") 
 
 
 

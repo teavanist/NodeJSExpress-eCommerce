@@ -12,15 +12,16 @@
   - display empty basket [DONE]
 
 
-  - Instructions to partners [DONE] 
-  - Check for item quantity before adding to cart 
-  - Remove item from cart button in the product listing page 
-  - Remove item from cart button in the My Basket page 
+  - Instructions to partners  
+  - Check for item quantity before adding to cart [DONE]
+  - Remove item from cart button in the product listing page  [DONE]
+  - Instructions to user to delete if needed and to save addresses and payments in checkout page [DONE]
   - Euro symbol to the product pages 
   - API Access Control 
-  - Shop first time click issue P3 and P
+  - Shop first time click issue P3 and P4 
   - Review requirements P3 and P4 once again 
   - Remove console log 
   - Remove res messages 
+  - add an ID for when the API creates a product and deletes one 
 
 */
