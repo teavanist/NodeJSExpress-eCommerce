@@ -12,7 +12,6 @@ var orderAttributes = {
 
     customer_id: {
         type: Sequelize.INTEGER,
-        allowNull: false
     },
 
     placed: {
@@ -40,8 +39,9 @@ var orderAttributes = {
 }
 
 const Order = db.define('Order', orderAttributes)
+
 try {
-    Order.sync({alter: true});
+    Order.sync();
 } catch (error) {
     console.error("error occured" + error)
 }

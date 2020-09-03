@@ -3,35 +3,30 @@ const { Sequelize, Op, Model, DataTypes } = require("sequelize");
 const db = require('../config/database');
 
 
-var cartItemAttributes = {
+var PaymentAttributes = {
     pk:{
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
 
-    product_id: {
-        type: Sequelize.INTEGER
+    amount: {
+        type: Sequelize.DECIMAL(10,2)
+        
     },
 
-    quantity: {
-        type: Sequelize.INTEGER
-    },
-
-    order_id: {
-        type: Sequelize.INTEGER
-    },
-
+    method: {
+        type: Sequelize.STRING
+    }
 
 }
 
-
-const CartItem = db.define('CartItem', cartItemAttributes)
+const Payment = db.define('Payment', PaymentAttributes)
 
 try {
-    CartItem.sync();
+    Payment.sync();
 } catch (error) {
     console.error("error occured" + error)
 }
 
-module.exports = CartItem; 
+module.exports = Payment; 

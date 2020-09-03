@@ -23,35 +23,46 @@ block content
       h3 Grand Total: € #{grand_total}
     p.lead 
       div.text-left.d-flex.justify-content-center.mt-5
-      form(method='POST', action='/accounts/registration')
+      form(method='POST', action='/shop/payment/'+CartItems[0].order_id)
 
         - var h1Classes = ['h3', 'mb-3', 'font-weight-normal']
+        //- Address section of the form begins here 
         div(id='address_section')
           p(class=h1Classes) Address
 
-          #form-group
+          //- Street name 
+          #form-group 
             label Street:
-            input.form-control(name='street_name', id='street_name',type='text', placeholder='Street name')
+            input.form-control(name='street_name', id='street_name',type='text', placeholder='Street name' required)
+
+          //- City name 
           #form-group
             label City:
-            input.form-control(name='city',id='city', type='text', placeholder='City name')
+            input.form-control(name='city',id='city', type='text', placeholder='City name' required)
+
+          //- Zip code 
           #form-group
             label Zipcode:
-            input.form-control(name='zipcode',id='zipcode',type='text')
+            input.form-control(name='zipcode',id='zipcode',type='text' required)
+
+          //- Country 
           #form-group
             label Country:
-            input.form-control(name='country',id='country',type='text')
+            input.form-control(name='country',id='country',type='text' required)
+          
+          //- Additional Info 
           #form-group
             label Additional Information:
-            input.form-control(name='city', type='text', id='additional_info', placeholder='Info such as landmark, unit , C/O etc')
+            input.form-control(name='additional_info', type='text', id='additional_info', placeholder='Info such as landmark, unit , C/O etc')
           br
-          button#btn_save.btn.btn-secondary Save Address Details 
+          a(href='#' class="btn.btn-secondary" id="btn_save") Save Address Details 
           br
 
 
         div(id ='address_msg', hidden='true')
-          pre.
-          button#btn_edit_address.btn.btn-secondary Edit
+          h4
+            div(id ='div_address_msg') hello
+          a(href='#' class="btn.btn-secondary" id="btn_edit_address" role="button") Edit Address Details
 
         div(id='payment_section')
           br
@@ -59,53 +70,126 @@ block content
 
           #form-group
             label Payment type:
-            select#inlineFormCustomSelect.custom-select.mr-sm-2
-              option(selected='') Choose...
+            select(name='payment_option', id ='payment_option', class = "custom-select mr-sm-2")
+              option(disabled='', selected='', value='')  -- select an option -- 
               option(value='Paypal') Paypal
               option(value='BankCard') Bank Card
               option(value='CreditCard') Credit Card
           #form-group
             label Amount:
-            input.form-control(name='city',id='city', type='text', placeholder='City name' value = grand_total) 
-          br
-          button#btn_payment_save.btn.btn-secondary Save Payment Details 
+            input.form-control(name='Amount',id='Amount', type='text',  value = grand_total) 
           br
           
-        
+          a(href='#' class="btn.btn-secondary" id="btn_payment_save" role="button") Save Payment Details
+          br
+
         div(id ='payment_msg', hidden='true')
-          pre.
-          button#btn_edit_payment.btn.btn-secondary Edit              
+          h4 Payment details:
+            div(id ='div_payment_msg')
+          a(href='#' class="btn.btn-secondary" id="btn_edit_payment" role="button") Edit Payment Selection    
         
-    p
-      em Depending on the type of payment type, you will be redirected to our partner site. During this time, please do not refresh or navigate away to a different site on the page. You will be redirected back to our site once the payment is completed.  
-    p.lead
-      a(href=`/shop/payment/` + CartItems[0].order_id , class='btn btn-info' role ='button') Proceed to Pay
+        p
+          em Depending on the type of payment type, you will be redirected to our partner site. During this time, please do not refresh or navigate away to a different site on the page. You will be redirected back to our site once the payment is completed.  
+
+        //- Payment button section  
+        div(id ='proceed_to_pay_section', hidden='true')
+          p.lead
+            input.btn.btn-primary.btn-block(type='submit',value='Proceed to Pay')
 
     script(type="text/javascript").
+
       const addAddress = (ev) => {
         ev.preventDefault();
+        
+        //- Save user inputs to this variable 
         let useraddress = {
-        street: document.getElementById("street_name").value,
-        city: document.getElementById("city").value,
-        zipcode: document.getElementById("zipcode").value,
-        country: document.getElementById("country").value,
-        additional_info: document.getElementById("additional_info").value,
+          street: document.getElementById("street_name").value,
+          city: document.getElementById("city").value,
+          zipcode: document.getElementById("zipcode").value,
+          country: document.getElementById("country").value,
+          additional_info: document.getElementById("additional_info").value,
         }
-        //hide the form
+
+        //- Form validation 
+        if (useraddress.street == "") { alert("Street cannot be empty"); return false; }
+        else if (useraddress.city == "") { alert("City cannot be empty"); return false; }
+        else if (useraddress.zipcode == "") { alert("Zipcode cannot be empty"); return false; }
+        else if (useraddress.country == "") { alert("Country cannot be empty"); return false; }
+        else { }
+
+
+        var address_text = '<br>Street: ' + useraddress["street"] + '<br>City: ' +useraddress["city"] + '<br>Zipcode: '+useraddress["zipcode"] + '<br>Country: '+useraddress["country"] + '<br>Additional Info: ' +useraddress["additional_info"]
+
+        //-Add to DOM and hide the form sections 
+
         document.getElementById("address_section").hidden = true
         document.getElementById("address_msg").hidden = false
-        let pre = document.querySelector('#address_msg pre')
-        pre.textContent = '\nStreet: ' + useraddress["street"] + '\nCity: ' +useraddress["city"] + '\nZipcode:'+useraddress["zipcode"] + '\nCountry:'+useraddress["country"] + '\nAdditional Info:' +useraddress["additional_info"]
+        document.getElementById("div_address_msg").innerHTML = address_text
+
+
+        //-Check and both payment and address section is saved, enable proceed to pay 
+        if (document.getElementById("address_section").hidden && document.getElementById("payment_section").hidden ){
+          document.getElementById("proceed_to_pay_section").hidden = false
+        }
+        else {
+          document.getElementById("proceed_to_pay_section").hidden = true
+        }
       }
+
       const unhideaddressform = (ev) => {
         ev.preventDefault();
+         
         document.getElementById("address_section").hidden = false
         document.getElementById("address_msg").hidden = true
+
+        //-Check and both payment and address section is saved, enable proceed to pay 
+        if (document.getElementById("address_section").hidden == true && document.getElementById("payment_section").hidden == true){
+          document.getElementById("proceed_to_pay_section").hidden = false
+        }
+        else { document.getElementById("proceed_to_pay_section").hidden = true   }
       }
 
-      const addPayment = (ev) => {}
-      const unhidePaymentSection = (ev) => {
+      const addPayment = (ev) => { 
+        ev.preventDefault();
+         
+        var e = document.getElementById("payment_option")
 
+        let paymentdata = {
+          payment_option: e.options[e.selectedIndex].value
+        }
+
+        //hide the form 
+        document.getElementById("payment_section").hidden = true
+        document.getElementById("payment_msg").hidden = false
+        var payment_text = '<br>Type of payment: ' + paymentdata["payment_option"]
+        document.getElementById("div_payment_msg").innerHTML = payment_text
+
+
+        //-Check and both payment and address section is saved, enable proceed to pay 
+        if (document.getElementById("address_section").hidden && document.getElementById("payment_section").hidden ){
+          document.getElementById("proceed_to_pay_section").hidden = false
+        }
+        else {
+          document.getElementById("proceed_to_pay_section").hidden = true
+        }
+      }
+
+
+      const unhidePaymentSection = (ev) => {
+        ev.preventDefault();
+        
+        document.getElementById("payment_section").hidden = false
+        document.getElementById("payment_msg").hidden = true
+
+
+        //-Check and both payment and address section is saved, enable proceed to pay 
+        if (document.getElementById("address_section").hidden && document.getElementById("payment_section").hidden ){
+          document.getElementById("proceed_to_pay_section").hidden = false
+        }
+        else {
+          document.getElementById("proceed_to_pay_section").hidden = true
+        }
+      }
 
 
       document.addEventListener('DOMContentLoaded', ()=>{

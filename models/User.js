@@ -35,6 +35,7 @@ var userAttributes = {
 
 const User = db.define('User', userAttributes)
 try {
+
     User.sync();
 } catch (error) {
     console.error("error occured" + error)

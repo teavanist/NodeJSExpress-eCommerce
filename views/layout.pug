@@ -6,6 +6,9 @@ html
     link(rel='stylesheet' href='/css/main.css')
     link(rel='stylesheet' href='/css/style.css')
     script(src='https://code.jquery.com/jquery-1.10.2.js')
+    script(src='/js/bootstrap.js')
+    script(src='/jquery.slim.min.js')
+
 
 
 
@@ -33,6 +36,8 @@ html
               a.nav-link(href='/accounts/login') Login
             li.nav-item
               a.nav-link(href='/accounts/registration') Register
+            li.nav-item
+              a.nav-link(href='/api/partnerfaq') FAQ for Partners
         if user 
           button.btn.btn-secondary.my-2.my-sm-0(type='button', disabled='') #{user.first_name} 
 
@@ -46,7 +51,8 @@ html
 
       block content
 
-    script(src='/jquery.slim.min.js')
     script(src='/js/bootstrap.js')
-    footer.text-center.small
-      p Copyright &copy; 2021
+    script(src='/jquery.slim.min.js')
+    div(class="container p-5")
+      footer.text-center.small
+        p Copyright &copy; 2021

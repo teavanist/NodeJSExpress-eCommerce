@@ -217,7 +217,7 @@ router.get('/products', authenticateToken, function (req, res, next) {
     
         }
     
-        async function doTheShit(){
+        async function doTheMainFunction(){
             let productData = await getProductRecordsByPagination(offset,limit);
                             
             if ( typeof productData == 'undefined' || productData == null){
@@ -230,7 +230,7 @@ router.get('/products', authenticateToken, function (req, res, next) {
             }
         }
     
-        doTheShit();
+        doTheMainFunction();
         
         
     } catch (err) {
@@ -289,7 +289,7 @@ router.delete('/products/:productid', authenticateToken, function (req, res, nex
     }
 
 
-    async function doTheShit(){
+    async function doTheMainFunction(){
         let productData = await getProductRecordbyID(req.params.productid );
         let partnerData = await getPartnerRecordsByUsername(req.partner.partnername)
 
@@ -312,10 +312,16 @@ router.delete('/products/:productid', authenticateToken, function (req, res, nex
 
     }
 
-    doTheShit();
+    doTheMainFunction();
     
 
 });
+
+router.get('/partnerfaq', function (req, res, next) {
+    res.render('partnerfaq')
+  });
+  
+  
 
 //============
 

@@ -168,7 +168,7 @@ router.post('/registration', [
         console.log("\n\n\n\n");
 
         req.flash('Message', 'You have been successfuly registered.Please check your email for the verification link')
-        res.render('login')
+        res.redirect('/accounts/login')
       })
 
     }

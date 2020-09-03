@@ -3,6 +3,8 @@
 var express = require('express');
 var router = express.Router();
 const db = require('../config/database');
+const { Op } = require("sequelize");
+
 
 let Partner = require('../models/Partner');
 let Product = require('../models/Product');
@@ -10,8 +12,11 @@ let User = require('../models/User');
 let Order = require('../models/Order');
 let CartItem = require('../models/CartItem');
 let Basket = require('../models/Basket')
+let Address = require('../models/Address')
+let Payment = require('../models/Payment')
 
-const jwt = require('jsonwebtoken');
+
+//const jwt = require('jsonwebtoken');
 
 /// ======================= COMMON FUNCTIONS ===================
 
@@ -50,15 +55,62 @@ async function getBasketItemsByOrderID(orderid){
 
 }
 
+async function getProductQuantity(id){
 
+  const result = await Product.findByPk(id);
+  return result;
+  
+}
+
+async function getCurrentBasketItems(user_id,res,req){
+  const { Sequelize, Op, Model, DataTypes, INTEGER } = require("sequelize");
+  const db = require('../config/database');
+  let CartItems = await db.query("SELECT * FROM `Baskets` where user_id=:user_id and is_order_placed=0", {
+     type: Sequelize.QueryTypes.SELECT,
+     replacements:{user_id: user_id}
+    })
+
+  var grand_total = 0; 
+
+  if ( typeof CartItems == 'undefined' || CartItems == null){
+    //or any other error handling mechanism 
+    res.status(403).send('Some problem retrieving your current basket');
+  }
+  else if (CartItems.length==0){
+    req.flash('Message', 'You have not added any item to your cart. Please add and try again ' )
+    res.redirect('/shop/products/list')
+
+  }
+  else {
+    for (var i=0; i< CartItems.length;i++){
+      grand_total = grand_total + parseFloat(CartItems[i].total_cost )
+    }
+  
+    res.render('mybasket',{CartItems,grand_total})
+
+  }
+
+
+}  
 
 //========================== ROUTE HANDLING =====================
+
 /* Products home page. */
 router.get('/products/list', function(req, res, next) {
+
+  if(!req.session.user){
+    return res.status(403).send('Please login ');
+  }
+
+  const queryCriteria = {
+    where: {
+      [Op.gt]: [{count:0}]
+    }
+  }
+
   
   Product.findAll()
   .then(function (products) {
-    console.log(products.length)
 
     res.render('shop',{products})
   })
@@ -70,11 +122,9 @@ router.get('/products/list', function(req, res, next) {
 });
 
 
-
-
-
 /* Add to cart functionality  */
 router.get('/basket/addtocart/:id', function(req, res, next) {
+
 /*
   The logic followed by this route is as follows 
   1. does the user have any active order --if yes, return order number 
@@ -85,11 +135,19 @@ router.get('/basket/addtocart/:id', function(req, res, next) {
   
   for each of the above a separate function is developed and they are called in order in the final function 
 */
+  if(!req.session.user){
+    return res.status(403).send('Please login ');
+  }
+
   
   var productID = req.params.id 
   var user = req.session.user
   var ordernumber = '';
   var cartID = '';
+
+
+
+
 
   
   async function getUsersActiveOrder(userid){
@@ -189,7 +247,10 @@ router.get('/basket/addtocart/:id', function(req, res, next) {
   }
     
   
-  async function doTheShit(){
+  async function doTheMainFunction(){
+
+
+
 
     //1. does the user have any active order --if yes, return order number 
     let existingOrderDetail = await getUsersActiveOrder(user.id);
@@ -207,7 +268,22 @@ router.get('/basket/addtocart/:id', function(req, res, next) {
     else {
       ordernumber = existingOrderDetail.pk 
       console.log('\n\n\n Existing order found with ref number '+ordernumber)
+
+      //before updating the quantity in the cart, check if the user has selected more items than in stock 
+      let CartItems = await getBasketItemsByOrderID(ordernumber); 
+
+      for (var i=0; i< CartItems.length;i++){
+        if(parseFloat(CartItems[i].cart_qty) > parseFloat(CartItems[i].available_qty)) {// user selected more than available 
+          return  res.status(404).send('You have selected more items than available in stock. This item cannot be selected now')
+        }
+      }
+
+
     }
+
+
+
+
 
     //3. check if the item is in the cart -> if yes, return cartid 
     let cartDetail = await isItemInCartAlready(productID,ordernumber);
@@ -233,34 +309,24 @@ router.get('/basket/addtocart/:id', function(req, res, next) {
   
   }
   
-  doTheShit();
+  try {
+    doTheMainFunction();
+  } catch (err) {
+    console.log(err)
+  }
 
 
 });
 
 
 router.get('/basket/mybasket', function(req, res, next){
+  if(!req.session.user){
+    return res.status(403).send('Please login ');
+  }
+
   var user = req.session.user
 
-  async function getCurrentBasketItems(user_id){
-    const { Sequelize, Op, Model, DataTypes, INTEGER } = require("sequelize");
-    const db = require('../config/database');
-    let CartItems = await db.query("SELECT * FROM `Baskets` where user_id=:user_id and is_order_placed=0", {
-       type: Sequelize.QueryTypes.SELECT,
-       replacements:{user_id: user.id}
-      })
-  
-    var grand_total = 0; 
-  
-    for (var i=0; i< CartItems.length;i++){
-      grand_total = grand_total + parseFloat(CartItems[i].total_cost )
-    }
-  
-    res.render('mybasket',{CartItems,grand_total})
-  }  
-
-
-  getCurrentBasketItems(user.id);
+  getCurrentBasketItems(user.id,res,req);
 
 });
 
@@ -278,7 +344,7 @@ router.get('/basket/:orderid', function(req, res, next){
 
 
 
-  async function doTheShit(userid,orderid){
+  async function doTheMainFunction(userid,orderid){
     let orderData = await getUsersOrder(userid,orderid,res); 
     let CartItems = await getBasketItemsByOrderID(orderid); 
 
@@ -293,7 +359,7 @@ router.get('/basket/:orderid', function(req, res, next){
 
   }
 
-  doTheShit(user.id,givenorderid)
+  doTheMainFunction(user.id,givenorderid)
 
 
 
@@ -315,7 +381,7 @@ router.get('/checkout/:orderid', function(req, res, next){
   var user = req.session.user; 
   var givenorderid = parseInt(req.params.orderid);
 
-  async function doTheShit(userid,orderid){
+  async function doTheMainFunction(userid,orderid){
     let orderData = await getUsersOrder(userid,orderid,res); 
     let CartItems = await getBasketItemsByOrderID(orderid); 
 
@@ -330,14 +396,208 @@ router.get('/checkout/:orderid', function(req, res, next){
 
   }
 
-  doTheShit(user.id,givenorderid)
+  doTheMainFunction(user.id,givenorderid)
 
 
 })
 
-router.get('/payment/:orderid', function(req, res, next){
+
+router.post('/payment/:orderid', function(req, res, next){
+  if(!req.session.user){
+    return res.status(403).send('Please login ');
+  }
+
+
+  try {
+
+    var productid = '';
+    var grand_total = 0; 
+    var user = req.session.user; 
+
+    //save all the form data from the request to a dictionary 
+
+    var req_data = {
+      orderid: parseInt(req.params.orderid),
+      userid: user.id,
+      street_name: req.body.street_name,
+      city: req.body.city,
+      zipcode: req.body.zipcode, 
+      country: req.body.country,
+      additional_info: req.body.additional_info, 
+      payment_option: req.body.payment_option,
+      total_amount: req.body.Amount
+    }
+
+    console.log(req_data)
+
+    async function createNewAddress( user_id, street, city, zipcode, country, additional_info){
+      row = {
+        user_id: user_id,
+        street: street,
+        city: city,
+        zipcode: zipcode,
+        country: country,
+        additional_info: additional_info
+      }
+  
+      const result = await Address.create(row);
+  
+      if ( typeof result == 'undefined' || result == null){
+        
+        res.status(403).send('Unable to create address in table');
+      }
+      else {
+        return result;
+      }
+
+    }
+
+    
+    async function createNewPaymentRecord(amount,method){
+      row = {
+        amount:amount,
+        method:method,
+      }
+  
+      const result = await Payment.create(row);
+  
+      if ( typeof result == 'undefined' || result == null){
+        
+        res.status(403).send('Unable to create payment entry in table');
+      }
+      else {
+        return result;
+      }
+  
+
+    }
+
+    async function updateOrderAfterPurchase(order_id,address_id,payment_id){
+
+      const updateCriteria = {
+        placed:true,
+        date_placed: Date.now(), 
+        shipping_address: address_id,
+        payment: payment_id
+
+      }
+
+      const queryCriteria = {
+        where: {
+          pk: order_id
+        }
+      }
+
+      Order.findOne(queryCriteria)
+      .then(function (orderRecord) {
+  
+        //if empty return null 
+        if (!orderRecord) {
+          res.status(403).send('Unable to find your order in the database')
+        }
+        else {
+          orderRecord.update(updateCriteria)
+          .then(function (result) { return result })
+          .catch((err) => { console.log(err); });
+        }
+  
+      })
+
+    }
+
+    async function updateQuantityforProductID(product_id,new_qty){
+
+      const updateCriteria = {
+        count:new_qty
+      }
+  
+      const queryCriteria = {
+        where: {
+          pk: product_id
+        }
+      }
+  
+      Product.findOne(queryCriteria)
+      .then(function (product) {
+  
+        //if empty return null 
+        if (!product) {
+          res.status(403).send('Unable to find product ' + product_id + ' in the database')
+        }
+        else {
+          product.update(updateCriteria)
+          .then(function (result) { return result })
+          .catch((err) => { console.log(err);res.status(403).send('Unable to update quantity for product ' + product_id + ' in the database') });
+        }
+  
+      })
+  
+    }
+
+
+
+    async function doTheMainFunction(req_data){
+      //let productRecords = await getProductQuantity(productid)
+      //if(!productRecords){
+        //return  res.status(404).send('Unable to find product')
+      //}
+
+      console.log(req_data.orderid)
+
+      let CartItems = await getBasketItemsByOrderID(req_data.orderid); 
+
+      for (var i=0; i< CartItems.length;i++){
+         if(parseFloat(CartItems[i].cart_qty) > parseFloat(CartItems[i].available_qty)) {// user selected more than available 
+          return  res.status(404).send('You have selected more items than available in stock')
+        }
+      }
+
+      req.flash('Message', 'Count is within available qiantity. Proceeding to next steps ' )
+
+      for (var i=0; i< CartItems.length;i++){
+        grand_total = grand_total + parseFloat(CartItems[i].total_cost )
+      }
+
+      req_data.total_amount = grand_total
+
+
+      let addressResult = await createNewAddress( req_data.userid, req_data.street_name, req_data.city, req_data.zipcode, req_data.country, req_data.additional_info)
+      req.flash('Message', 'Address updated to table' )
+
+      let paymentResult = await createNewPaymentRecord(req_data.total_amount,req_data.payment_option)
+      req.flash('Message', 'Payment updated to table' )
+
+      let orderResult = await updateOrderAfterPurchase(req_data.orderid,addressResult.pk,paymentResult.pk)
+      req.flash('Message', 'Order has been updated' )
+
+      for (var i=0; i< CartItems.length;i++){
+
+        // modify quantity for each product in the order 
+        var new_qty =  parseFloat(CartItems[i].available_qty) - parseFloat(CartItems[i].cart_qty)
+        
+        let modifiedProduct = await updateQuantityforProductID( CartItems[i].product_id , new_qty)
+
+      }
+      req.flash('Message', 'All Quantities have  been updated' )
+
+
+     
+
+
+      return  res.render('paymentstatus')
+    }
+
+    doTheMainFunction(req_data)
+    
+  } catch (error) {
+
+    console.log(error)
+    
+  }
 
   
+
+
 
 })
 

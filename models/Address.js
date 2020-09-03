@@ -1,40 +1,48 @@
-/*
-This file handles the User model
-1. Defines its attributes 
-2. Synchronizes the attributes with the structure in the table 
-*/
+
 const { Sequelize, Op, Model, DataTypes } = require("sequelize");
 const db = require('../config/database');
 
 
-var partnerAttributes = {
-    id:{
+var AddressAttributes = {
+    pk:{
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
 
-    name: {
+    user_id: {
+        type: Sequelize.INTEGER
+        
+    },
+
+    street: {
         type: Sequelize.STRING
     },
 
-    web_site: {
+    city: {
         type: Sequelize.STRING
     },
 
-    token: {
+    zipcode: {
         type: Sequelize.STRING
     },
 
+    country: {
+        type: Sequelize.STRING
+    },
 
+    additional_info: {
+        type: Sequelize.STRING
+    }
 }
-const Partner = db.define('Partner', partnerAttributes)
+
+
+const Address = db.define('Address', AddressAttributes)
 
 try {
-
-    Partner.sync();
+    Address.sync();
 } catch (error) {
     console.error("error occured" + error)
 }
 
-module.exports = Partner; 
+module.exports = Address; 

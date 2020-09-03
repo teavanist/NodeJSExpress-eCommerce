@@ -46,10 +46,11 @@ var productAttributes = {
 
 
 }
-
 const Product = db.define('Product', productAttributes)
+
 try {
-    Product.sync({alter: true});
+
+    Product.sync();
 } catch (error) {
     console.error("error occured" + error)
 }

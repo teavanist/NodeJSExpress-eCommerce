@@ -66,6 +66,9 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(express.static('public'))
+
+
 //Global variable
 
 app.get('*', function(req, res, next){

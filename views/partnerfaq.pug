@@ -1,0 +1,42 @@
+extends layout
+
+block content
+    .container
+        h1 Partner FAQs
+        #accordion
+        .card
+            #headingOne.card-header
+            h5.mb-0
+                button.btn.btn-link(data-toggle='collapse', data-target='#collapseOne', aria-expanded='true', aria-controls='collapseOne')
+                | #1 How can partners submit products to the store?
+            #collapseOne.collapse.show(aria-labelledby='headingOne', data-parent='#accordion')
+            .card-body
+                | You will need a bearer token to submit products. Please contact your Account Manager who will provide you with the token. Once you have the token, you can submit the products using the APIs we have made available for you. 
+        .card
+            #headingTwo.card-header
+            h5.mb-0
+                button.btn.btn-link.collapsed(data-toggle='collapse', data-target='#collapseTwo', aria-expanded='false', aria-controls='collapseTwo')
+                | #2 How can I submit a product using the API?
+            #collapseTwo.collapse(aria-labelledby='headingTwo', data-parent='#accordion')
+            .card-body
+                p Following example shows how to do so in a tool like Postman: 
+                p 1. Make sure add the bearer token in the header 
+                p 2. Submit a request via the API 
+                p Use the two screenshots below as your guidance. 
+                p
+                    img(src="../brearer_token.png", alt="Bearer Token" class="img-fluid border border-secondary rounded") 
+                p 
+                    img(src="../create_products.png", alt="Create Products" class="img-fluid border border-secondary rounded") 
+
+
+
+
+            
+                
+
+
+
+
+
+
+
